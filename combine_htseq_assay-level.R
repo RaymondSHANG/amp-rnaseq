@@ -5,18 +5,19 @@
 library(argparse)
 
 parser = ArgumentParser(description='Collect and sum assay level counts into a matrix file.')
-parser$add_argument('--oPrefix', type="character", required=TRUE, help='Prefix for output files.')
-parser$add_argument('--wd', default = getwd(), type="character", help='Directory for output files [default %(default)s].')
-parser$add_argument('--splitChar', default = "_", help='Character on which to split the count file names.')
-parser$add_argument('--segKeep', default = 2, type="integer", help='Number of filename seqments to retain for sample-level aggregation.')
-parser$add_argument('--single', action='store_true', help='Use if combining single-end counts data.')
+parser$add_argument('oPrefix', type="character", help='Prefix for output files.')
+parser$add_argument('--wd', default = getwd(), type="character", help='Directory of input files [default %(default)s].')
+parser$add_argument('--splitChar', default="_", type="character", help='Character on which to split the count file names [default %(default)s].')
+parser$add_argument('--segKeep', default=2, type="integer", help='Number of filename seqments to retain for sample-level aggregation [default %(default)s].')
+parser$add_argument('--single', action='store_const', const="single", default="paired", help='Use if combining single-end counts data [default %(default)s].')
 args = parser$parse_args()
 
+print(args$single)
 
 setwd(args$wd)
 x = dir()
 
-shortNames = sapply(as.list(x),function(x){paste(unlist(strsplit(x,args$splitChar))[1:args$seqKeep],collapse = "_")})
+shortNames = sapply(as.list(x),function(x){paste(unlist(strsplit(x,args$splitChar))[1:args$segKeep],collapse = "_")})
 samples = unique(shortNames)
 head(samples)
 length(x)
@@ -38,8 +39,7 @@ sumAssayLevel=function(inSample,PEorSE="paired"){
     return(rowSums(countsOriginal))
 }
 
-if (args$single) { collectedSums = sapply(as.list(samples),sumAssayLevel,PEorSE="single" )}
-else { collectedSums = sapply(as.list(samples),sumAssayLevel) }
+collectedSums = sapply(as.list(samples),sumAssayLevel,PEorSE=args$single )
 #save(collectedSums, file = paste(args$oPrefix, "collectedSums.Robj.gz", sep - "_"), compress = "bzip2")
 
 tail(collectedSums)
@@ -48,6 +48,6 @@ data = read.delim(x[1], header = FALSE, row.names =1)
 rownames(collectedSums) = rownames(data)
 colnames(collectedSums) = samples
 head(collectedSums)
-write.table(collectedSums,file = paste(args$oPrefix, "counts_matrix.txt", sep = "_"), row.names = TRUE, col.names = TRUE, quote = FALSE, sep = "\t")
+write.table(collectedSums,file = paste(args$oPrefix, args$single, "counts_matrix.txt", sep="_", collapse = "_"), row.names = TRUE, col.names = TRUE, quote = FALSE, sep = "\t")
 
 
