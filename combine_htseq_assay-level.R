@@ -22,11 +22,23 @@ samples = unique(shortNames)
 head(samples)
 length(x)
 length(shortNames)
+firstData = read.delim(x[1], header = FALSE, row.names =1)
+ENSGnames = rownames(firstData)
+expectedLength = nrow(firstData)
 
 
-readHTS=function(inFile){
+readHTS=function(inFile,rNames=ENSGnames,nrows=expectedLength){
 #  print(inFile)
   data = read.delim(inFile, header = FALSE, row.names =1)
+  if (! nrow(data) == nrows) {
+  	print(paste("Different number of input lines", inFile, sep = " ")) 
+  	break
+	}  
+  nameCheck = which((rownames(data) == rNames) == FALSE)
+  if (length(nameCheck) > 0) { 
+  	print(paste("Mismatch of rownames at file", inFile, sep = " ")) 
+  	break
+  	}
   if (ncol(data) > 0) { return(data[,1]) }
   else {return(rep(NA,nrow(data))) }
 }
