@@ -5,7 +5,7 @@ module load sailfish/0.9.0 picard
 sample=`basename $1 .bam`
 
 
-java -Xmx4G -jar $PICARD_HOME/SortSam.jar INPUT=$1 OUTPUT=/dev/stdout SORT_ORDER=queryname QUIET=true VALIDATION_STRINGENCY=SILENT COMPRESSION_LEVEL=0 | java -Xmx4G -jar $PICARD_HOME/SamToFastq.jar INPUT=/dev/stdin FASTQ=/sc/orga/projects/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r1.fastq SECOND_END_FASTQ=/sc/orga/projects/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r2.fastq VALIDATION_STRINGENCY=SILENT
+java -Xmx8G -jar $PICARD SortSam INPUT=$1 OUTPUT=/dev/stdout SORT_ORDER=queryname QUIET=true VALIDATION_STRINGENCY=SILENT COMPRESSION_LEVEL=0 | java -Xmx4G -jar $PICARD SamToFastq INPUT=/dev/stdin FASTQ=/sc/orga/projects/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r1.fastq SECOND_END_FASTQ=/sc/orga/projects/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r2.fastq VALIDATION_STRINGENCY=SILENT
 
 #samtools collate -O -u $1 | samtools fastq -n -t -1 /sc/orga/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r1.fastq -2 /sc/orga/AMP_AD/reprocess/inputs/ROSMAP-fastq/$sample.r2.fastq
 
