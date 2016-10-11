@@ -30,13 +30,11 @@ readHTS=function(inFile,inCol=args$quantCol,rNames=ENSGnames,nrows=expectedLengt
 	print(inFile)
 	data = read.delim(inFile, header = args$header, row.names =1)
     if (! nrow(data) == nrows) {
-  		print(paste("Different number of input lines", inFile, sep = " ")) 
-  		break
+  		stop(paste("Different number of input lines", inFile, sep = " ")) 
 	}  
   nameCheck = which((rownames(data) == rNames) == FALSE)
   if (length(nameCheck) > 0) { 
-  	print(paste("Mismatch of rownames at file", inFile, sep = " ")) 
-  	break
+  	stop(paste("Mismatch of rownames at file", inFile, sep = " ")) 
   }
   if (ncol(data) > 0) { return(data[,inCol]) }
   else {return(rep(NA,nrow(data))) }
