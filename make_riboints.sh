@@ -13,7 +13,7 @@ rRNA="$(basename ${1} .annotation.gtf).rRNA.interval_list"
 
 # Sequence names and lengths from BAM header
 samtools view -H $2 \
-    | egrep -v "(_|\-)" \
+    | awk 'OFS="\t" {print $1,$2,$3}' \
     > $rRNA
 
 # Intervals for rRNA transcripts
