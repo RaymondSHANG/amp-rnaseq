@@ -1,1 +1,9 @@
+# Byte-compiled / optimized / DLL files
+__pycache__
+*.pyc
+
+# Data files (for testing)
 data
+
+# Unit test / coverage reports
+.cache
