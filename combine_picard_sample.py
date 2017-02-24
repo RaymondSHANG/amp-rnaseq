@@ -2,6 +2,8 @@
 """
 Script to combine Picard metrics from multiple tools for the same sample.
 """
+import logging
+logger = logging.getLogger(__name__)
 import sys
 import re
 import csv
@@ -12,6 +14,7 @@ def read_file(path):
     """
     Read lines from a file and return as list.
     """
+    logger.debug("reading file {}".format(path))
     with open(path) as f:
         return f.readlines()
 
@@ -54,6 +57,9 @@ def main(argv):
     Combine data from one or more Picard metrics outputs into a
     single CSV table.
     """
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', '-o',
                         help='path to output CSV file')
