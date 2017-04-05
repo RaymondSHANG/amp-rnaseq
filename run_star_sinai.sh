@@ -1,25 +1,51 @@
 #! /bin/bash
 
 # $1 = bamfile (name only, path is hardcoded)
-# $2 = unmapped fq file, unzipped
-
+# $2 = unmapped fq.gz file
 
 module load star/2.5.1b picard
 
 sample=`basename $1 .bam`
+unmapped=`basename $2 .gz`
 
+rootdir="/sc/orga/projects/AMP_AD/reprocess"
+indir="${rootdir}/inputs/MSSM/MSSM-BAM-from-Synapse"
+unmapdir="${rootdir}/inputs/MSSM/MSSM-unmapped-FASTQ-from-Synapse"
+fastqdir="${rootdir}/inputs/MSSM/MSSM-fastq-from-synBAM"
 
+gunzip "${unmapdir}/${2}"
 
-java -Xmx8G -jar $PICARD SortSam INPUT=/hpc/users/xdangk01/AMPAD/reprocess/inputs/MSSM/MSSM-BAM-from-Synapse/bm36/$1 OUTPUT=/dev/stdout SORT_ORDER=queryname QUIET=true VALIDATION_STRINGENCY=SILENT COMPRESSION_LEVEL=0 | java -Xmx4G -jar $PICARD SamToFastq INPUT=/dev/stdin FASTQ=/sc/orga/projects/AMP_AD/reprocess/inputs/MSSM/MSSM-fastq-from-synBAM/$sample.fastq  VALIDATION_STRINGENCY=SILENT
+java -Xmx8G -jar $PICARD \
+    SamToFastq INPUT="${indir}/${1}" \
+    FASTQ="${fastqdir}/${sample}.fastq" \
+    VALIDATION_STRINGENCY=SILENT
 
-cat /sc/orga/projects/AMP_AD/reprocess/inputs/MSSM/MSSM-fastq-from-synBAM/$sample.fastq /hpc/users/xdangk01/AMPAD/reprocess/inputs/MSSM/MSSM-unmapped-FASTQ-from-Synapse/bm36/$2 | gzip > /sc/orga/projects/AMP_AD/reprocess/inputs/MSSM/MSSM-fastq-from-synBAM/$sample.combined.fastq.gz
-rm /sc/orga/projects/AMP_AD/reprocess/inputs/MSSM/MSSM-fastq-from-synBAM/$sample.fastq
+# Sorting the FASTQ after addition of unmapped reads
+cat "${fastqdir}/${sample}.fastq" "${unmapdir}/${unmapped}" \
+    | paste - - - - \
+    | sort -k1,1 -S 3G \
+    | tr '\t' '\n' \
+    | gzip > "${fastqdir}/${sample}.combined.fastq.gz"
+rm "${fastqdir}/${sample}.fastq"
+gzip "${unmapdir}/${unmapped}"
 
+index="/sc/orga/projects/PBG/REFERENCES/GRCh38/star/Gencode24"
 
-index='/hpc/users/xdangk01/REFERENCES/GRCh38/star/Gencode24'
+outdir="${rootdir}/outputs/MSSM/star_all_from_syn7416949/${sample}"}
+if [[ ! -e "$outdir" ]]; then
+    mkdir $outdir
+fi
+cd $outdir
 
-mkdir /hpc/users/xdangk01/AMPAD/reprocess/outputs/MSSM/star_bm36_from_syn3157743/$sample
-cd /hpc/users/xdangk01/AMPAD/reprocess/outputs/MSSM/star_bm36_from_syn3157743/$sample
-
-STAR --runMode alignReads --runThreadN 4 --genomeDir $index --readFilesIn /sc/orga/projects/AMP_AD/reprocess/inputs/MSSM/MSSM-fastq-from-synBAM/$sample.combined.fastq.gz --outFileNamePrefix $sample --outSAMtype BAM Unsorted --outSAMunmapped Within --quantMode GeneCounts --twopassMode Basic --readFilesCommand zcat
+STAR \
+    --runMode alignReads \
+    --runThreadN 4 \
+    --genomeDir $index \
+    --readFilesIn "${fastqdir}/${sample}.combined.fastq.gz" \
+    --outFileNamePrefix $sample \
+    --outSAMtype BAM Unsorted \
+    --outSAMunmapped Within \
+    --quantMode GeneCounts \
+    --twopassMode Basic \
+    --readFilesCommand zcat
 

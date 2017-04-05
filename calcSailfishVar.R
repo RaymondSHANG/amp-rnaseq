@@ -1,4 +1,4 @@
-#! /usr/bin/env Rscript
+#!/usr/bin/env Rscript
 # KKD for Sage Bionetworks
 # 15 Jul 2016
 
@@ -18,6 +18,7 @@ newHeader = read.delim(args$headF, header = FALSE)
 #quantFile = fread(input = "~/Computing/NIA-AMP-AD/reprocessed/transcripts/quant_bootstraps.tsv", header = TRUE)
 
 calcSummary=function(inQuant,nHead=newHeader,toPlot=FALSE){
+  print(inQuant)
   bootData = fread(input = inQuant, header = TRUE)
   colnames(bootData) = as.character(nHead[,1])
   test = data.matrix(bootData)
