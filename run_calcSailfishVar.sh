@@ -4,4 +4,7 @@
 
 module load R python
 
-/hpc/users/xdangk01/AMPAD/reprocess/code/amp-rnaseq/calcSailfishVar.R --oPrefix $1 --headF $2 --wd $3
+rootdir="/sc/orga/projects/AMP_AD/reprocess"
+codedir="${rootdir}/code/amp-rnaseq"
+
+"${codedir}/bin/calcSailfishVar.R" --oPrefix $1 --headF $2 --wd $3

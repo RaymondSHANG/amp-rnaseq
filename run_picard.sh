@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-module load picard python py_packages 
+module load picard python py_packages
 
 sample="$(basename $1 .bam)"
 if [ ! -e "picard/${sample}" ]; then
     mkdir -p "picard/${sample}"
 fi
 
+rootdir="/sc/orga/projects/AMP_AD/reprocess"
+scratchdir="/sc/orga/scratch"
+codedir="${rootdir}/code/amp-rnaseq"
 
-FASTA=/sc/orga/projects/PBG/REFERENCES/GRCh38/Gencode/release_24/GRCh38.primary_assembly.genome.fa
-REFFLAT=/sc/orga/projects/AMP_AD/reprocess/inputs/picard_stuff/gencode.v24.primary_assembly.refFlat.txt
-RIBOINTS=/sc/orga/projects/AMP_AD/reprocess/inputs/picard_stuff/gencode.v24.primary_assembly.rRNA.interval_list
+FASTA="/sc/orga/projects/PBG/REFERENCES/GRCh38/Gencode/release_24/GRCh38.primary_assembly.genome.fa"
+REFFLAT="${rootdir}/inputs/picard_stuff/gencode.v24.primary_assembly.refFlat.txt"
+RIBOINTS="${rootdir}/inputs/picard_stuff/gencode.v24.primary_assembly.rRNA.interval_list"
 
 # Sort BAM
 java -Xmx8G -jar $PICARD SortSam \
@@ -19,7 +22,7 @@ java -Xmx8G -jar $PICARD SortSam \
     SORT_ORDER=coordinate \
     VALIDATION_STRINGENCY=SILENT \
     COMPRESSION_LEVEL=0 \
-    TMP_DIR="/sc/orga/scratch/${USER}/${sample}/"
+    TMP_DIR="${scratchdir}/${USER}/${sample}/"
 
 # CollectAlignmentSummaryMetrics (after sorting)
 java -Xmx8G -jar $PICARD CollectAlignmentSummaryMetrics \
@@ -32,7 +35,7 @@ java -Xmx8G -jar $PICARD CollectAlignmentSummaryMetrics \
     R=$FASTA \
     INPUT="picard/${sample}.tmp.bam" \
     OUTPUT="picard/${sample}/picard.analysis.CollectAlignmentSummaryMetrics" \
-    TMP_DIR="/sc/orga/scratch/${USER}/${sample}/"
+    TMP_DIR="${scratchdir}/${USER}/${sample}/"
 
 
 # CollectRnaSeqMetrics (after sorting)
@@ -48,7 +51,7 @@ java -Xmx8G -jar $PICARD CollectRnaSeqMetrics \
     RIBOSOMAL_INTERVALS=$RIBOINTS \
     INPUT="picard/${sample}.tmp.bam" \
     OUTPUT="picard/${sample}/picard.analysis.CollectRnaSeqMetrics" \
-    TMP_DIR="/sc/orga/scratch/${USER}/${sample}/"
+    TMP_DIR="${scratchdir}/${USER}/${sample}/"
 
 # MarkDuplicates (after sorting)
 # java -Xmx8G -jar $PICARD MarkDuplicates \
@@ -58,16 +61,15 @@ java -Xmx8G -jar $PICARD CollectRnaSeqMetrics \
 #     REMOVE_DUPLICATES=false \
 #     OPTICAL_DUPLICATE_PIXEL_DISTANCE=100 \
 #     INPUT="picard/${sample}.tmp.bam" \
-#     OUTPUT="/sc/orga/scratch/xdangk01/${sample}/tmp.bam" \
+#     OUTPUT="${scratchdir}/${USER}/${sample}/tmp.bam" \
 #     METRICS_FILE="picard/${sample}/picard.analysis.MarkDuplicates" \
-#     TMP_DIR="/sc/orga/scratch/${USER}/${sample}/"
+#     TMP_DIR="${scratchdir}/${USER}/${sample}/"
 
 
 # Clean up
 rm "picard/${sample}.tmp.bam"
-#rm "/sc/orga/scratch/${USER}/${sample}/tmp.bam"
-rmdir "/sc/orga/scratch/${USER}/${sample}"
+rmdir "${scratchdir}/${USER}/${sample}"
 
 picard_outputs=$(find picard/${sample} -name "picard.analysis*")
-/sc/orga/projects/AMP_AD/reprocess/code/amp-rnaseq/combine_picard_sample.py $picard_outputs \
+"${codedir}/bin/combine_picard_sample.py" $picard_outputs \
     -o "picard/${sample}/picard.CombinedMetrics.csv"

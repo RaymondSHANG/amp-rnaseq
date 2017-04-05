@@ -2,7 +2,13 @@
 # KKD for Sage Bionetworks
 # 15 Jul 2016
 
-
 module load python
 
-for item in `ls /hpc/users/xdangk01/AMPAD/reprocess/outputs/ROSMAP`; do python /hpc/users/xdangk01/AMPAD/reprocess/code/salmon/scripts/ConvertBootstrapsToTSV.py /hpc/users/xdangk01/AMPAD/reprocess/outputs/ROSMAP/$item /hpc/users/xdangk01/AMPAD/reprocess/outputs/ROSMAP/$item/aux/ ; done
+rootdir="/sc/orga/projects/AMP_AD/reprocess"
+codedir="${rootdir}/code/amp-rnaseq"
+
+for item in `ls ${rootdir}/outputs/ROSMAP`; do
+    "${codedir}/tools/salmon/scripts/ConvertBootstrapsToTSV.py" \
+        "${rootdir}/outputs/ROSMAP/${item}" \
+        "${rootdir}/outputs/ROSMAP/${item}/aux/"
+done

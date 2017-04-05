@@ -17,8 +17,7 @@ java -Xmx8G -jar $PICARD SortSam \
     QUIET=true \
     VALIDATION_STRINGENCY=SILENT \
     COMPRESSION_LEVEL=0 \
-    | java -Xmx4G -jar $PICARD \
-        SamToFastq \
+    | java -Xmx4G -jar $PICARD SamToFastq \
         INPUT=/dev/stdin \
         FASTQ="${fastqdir}/${sample}.r1.fastq" \
         SECOND_END_FASTQ="${fastqdir}/${sample}.r2.fastq" \
@@ -46,4 +45,3 @@ STAR \
     --quantMode GeneCounts \
     --twopassMode Basic \
     --readFilesCommand zcat
-
