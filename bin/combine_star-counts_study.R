@@ -11,29 +11,36 @@ library(purrr)
 library(dplyr)
 
 parser = ArgumentParser(description = "Combine sample STAR count files into a matrix file.")
-parser$add_argument('file_list', type = "character", required = TRUE,
+parser$add_argument('file_list', type = "character", nargs = "+",
                     help = "List of STAR read count files to combine.")
 parser$add_argument('--out_prefix', type = "character", required = TRUE,
-                    help = "Prefix for output files.")
+                    help = "Prefix for output files (i.e., <prefix>_all_counts_matrix.txt).")
 parser$add_argument('--sample_suffix', type = "character",
                     default = "ReadsPerGene.out.tab",
                     help = "Suffix to strip from sample filename [default %(default)s].")
 parser$add_argument('--out_dir', default = getwd(), type = "character",
                     help = "Directory in which to save output [default %(default)s].")
+parser$add_argument('--col_num', default = 2, type = "integer",
+                    help = "1-based index of counts column to select [default %(default)s].")
 args = parser$parse_args()
 
-names(file_list) <- map_chr(file_list, function(file_path) {
+names(args$file_list) <- map_chr(args$file_list, function(file_path) {
     basename(file_path) %>%
-        str_replace(sample_suffix, "")
+        str_replace(args$sample_suffix, "")
     })
-feature_order <- read_tsv(file_list[1], col_names = FALSE)[["X1"]]
+feature_order <- read_tsv(args$file_list[1], col_names = FALSE)[["X1"]]
 
-combined_counts <- map_df(file_list, function(file_path) {
-    sample_name <- str_replace(file_path, sample_suffix, "")
+message("Combining counts for all samples...")
+combined_counts <- map_df(args$file_list, function(file_path) {
     read_tsv(file_path, col_names = FALSE) %>%
-        select(X1, X2) %>%
+        .[, c(1, args$col_num)] %>%
         set_names(c("feature", "count")) %>%
         mutate(feature = factor(feature, levels = feature_order))
     },
     .id = "sample") %>%
     spread(sample, count)
+
+message("Saving output...")
+out_file <- file.path(args$out_dir,
+                      paste0(args$out_prefix, "_all_counts_matrix.txt"))
+write_tsv(combined_counts, out_file)
