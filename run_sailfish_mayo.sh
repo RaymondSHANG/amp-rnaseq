@@ -2,10 +2,9 @@
 
 module load sailfish/0.9.0 picard
 
-sample=`basename $1 .snap.bam`
+sample=`basename $1 r1.fastq.gz`
 
 rootdir="/sc/orga/projects/AMP_AD/reprocess"
-fastqdir="${rootdir}/inputs/Mayo/MayoTCX-fastq-from-synBam"
 
 outdir="${rootdir}/outputs/Mayo_TCX/sailfish/${sample}"
 if [[ ! -e "$outdir" ]]; then
@@ -16,8 +15,8 @@ sailfish quant \
     -p 4 \
     -i /sc/orga/projects/PBG/REFERENCES/GRCh38/sailfish/gencodev24 \
     -l IU \
-    -1 "${fastqdir}/${sample}.r1.fastq" \
-    -2 "${fastqdir}/${sample}.r2.fastq" \
+    -1 $1 \
+    -2 $2 \
     -o $outdir \
     --biasCorrect \
     --numBootstraps 100 \
