@@ -13,11 +13,10 @@ if [[ ! -e "$outdir" ]]; then
 fi
 
 sailfish quant \
-    -p 4 \
     -i /sc/orga/projects/PBG/REFERENCES/GRCh38/sailfish/gencodev24 \
     -l ISR \
-    -1 $1 \
-    -2 $2 \
+    -1 <(zcat $1) \
+    -2 <(zcat $2) \
     -o $outdir \
     --biasCorrect \
     --numBootstraps 100 \
