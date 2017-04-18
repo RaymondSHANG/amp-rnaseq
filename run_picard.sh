@@ -70,7 +70,7 @@ java -Xmx8G -jar $PICARD CollectRnaSeqMetrics \
 rm "picard/${sample}.tmp.bam"
 rm -rf "${scratchdir}/${USER}/${sample}"
 
-sample_short=$(sed 's/\.accepted.*//' ${sample})
+sample_short=$(echo ${sample} | sed 's/\.accepted.*//' | sed 's/Aligned.out//')
 picard_outputs=$(find picard/${sample} -name "picard.analysis*")
 "${codedir}/bin/combine_picard_sample.py" $picard_outputs \
     -o "picard/${sample}/${sample_short}_picard.CombinedMetrics.csv"
