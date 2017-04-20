@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# JAE for Sage Bionetworks
+# February 24, 2017
 
 # modified from https://gist.github.com/slowkow/b11c28796508f03cdf4b
 

@@ -1,4 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
+# KKD for Sage Bionetworks
+# September 12, 2016
+# Modified by JAE for Sage Bionetworks
+# April 5, 2017
 
 # $1 = bamfile (name only, path is hardcoded)
 # $2 = unmapped fq.gz file
@@ -48,4 +52,3 @@ STAR \
     --quantMode GeneCounts \
     --twopassMode Basic \
     --readFilesCommand zcat
-

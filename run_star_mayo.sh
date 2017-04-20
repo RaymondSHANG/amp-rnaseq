@@ -1,4 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
+# KKD for Sage Bionetworks
+# November 16, 2016
+# Modified by JAE for Sage Bionetworks
+# April 5, 2017
 
 # $1 = bamfile (name only, path is hardcoded)
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# JAE for Sage Bionetworks
+# February 24, 2017
 
 module load picard python py_packages
 

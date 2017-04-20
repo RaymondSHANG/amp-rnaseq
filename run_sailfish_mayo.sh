@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# JAE for Sage Bionetworks
+# April 14, 2017
 
 module load sailfish/0.9.0
 

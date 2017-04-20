@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# JAE for Sage Bionetworks
+# February 24, 2017
 """
 Script to combine Picard metrics from multiple tools for the same sample.
 """

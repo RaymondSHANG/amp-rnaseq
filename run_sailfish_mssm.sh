@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# JAE for Sage Bionetworks
+# April 14, 2017
 
-module load sailfish/0.9.0 picard
+module load sailfish/0.9.0
 
 sample=`basename $1 .fastq.gz`
 
@@ -15,7 +17,7 @@ sailfish quant \
     -p 4 \
     -i /sc/orga/projects/PBG/REFERENCES/GRCh38/sailfish/gencodev24 \
     -l U \
-    -r $1 \
+    -r <(zcat $1) \
     -o $outdir \
     --biasCorrect \
     --numBootstraps 100 \

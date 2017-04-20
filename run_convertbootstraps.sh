@@ -1,6 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
 # KKD for Sage Bionetworks
-# 15 Jul 2016
+# July 15, 2016
+# Modified by JAE for Sage Bionetworks
+# April 18, 2017
 
 module load python
 

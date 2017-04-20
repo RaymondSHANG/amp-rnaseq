@@ -1,6 +1,6 @@
-#! /bin/bash
+#!/usr/bin/env bash
 # KKD for Sage Bionetowkrs
-# 18 Jul 2016
+# July 18, 2016
 
 module load R python
 
