@@ -4,7 +4,7 @@
 
 module load sailfish/0.9.0
 
-sample=`basename $1 r1.fastq.gz`
+sample=`basename $1 .r1.fastq.gz`
 region=$3
 
 rootdir="/sc/orga/projects/AMP_AD/reprocess"
