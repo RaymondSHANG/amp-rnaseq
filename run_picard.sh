@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
+# Compute Picard metrics for aligned reads in a selected BAM file
 # JAE for Sage Bionetworks
 # February 24, 2017
+
+# $1 = BAM file (name only, assumed in current directory)
 
 module load picard python py_packages
 
 sample="$(basename $1 .bam)"
-if [ ! -e "picard/${sample}" ]; then
-    mkdir -p "picard/${sample}"
-fi
 
+# Define paths
 rootdir="/sc/orga/projects/AMP_AD/reprocess"
 scratchdir="/sc/orga/scratch"
 codedir="${rootdir}/code/amp-rnaseq"
 
+# Reference files
 FASTA="/sc/orga/projects/PBG/REFERENCES/GRCh38/Gencode/release_24/GRCh38.primary_assembly.genome.fa"
 REFFLAT="${rootdir}/inputs/picard_stuff/gencode.v24.primary_assembly.refFlat.txt"
 RIBOINTS="${rootdir}/inputs/picard_stuff/gencode.v24.primary_assembly.rRNA.interval_list"
+
+# Specify output folder
+if [ ! -e "picard/${sample}" ]; then
+    mkdir -p "picard/${sample}"
+fi
 
 # Sort BAM
 java -Xmx8G -jar $PICARD SortSam \
@@ -38,7 +45,6 @@ java -Xmx8G -jar $PICARD CollectAlignmentSummaryMetrics \
     INPUT="picard/${sample}.tmp.bam" \
     OUTPUT="picard/${sample}/picard.analysis.CollectAlignmentSummaryMetrics" \
     TMP_DIR="${scratchdir}/${USER}/${sample}/"
-
 
 # CollectRnaSeqMetrics (after sorting)
 java -Xmx8G -jar $PICARD CollectRnaSeqMetrics \
@@ -67,11 +73,11 @@ java -Xmx8G -jar $PICARD CollectRnaSeqMetrics \
 #     METRICS_FILE="picard/${sample}/picard.analysis.MarkDuplicates" \
 #     TMP_DIR="${scratchdir}/${USER}/${sample}/"
 
-
 # Clean up
 rm "picard/${sample}.tmp.bam"
 rm -rf "${scratchdir}/${USER}/${sample}"
 
+# Combine metrics for current sample
 sample_short=$(echo ${sample} | sed 's/\.accepted.*//' | sed 's/Aligned.out//')
 picard_outputs=$(find picard/${sample} -name "picard.analysis*")
 "${codedir}/bin/combine_picard_sample.py" $picard_outputs \

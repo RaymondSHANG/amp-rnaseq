@@ -5,11 +5,12 @@
 Script to combine Picard metrics from multiple tools for the same sample.
 """
 import logging
-logger = logging.getLogger(__name__)
 import sys
 import re
 import csv
 import argparse
+
+logger = logging.getLogger(__name__)
 
 
 def read_file(path):
@@ -60,7 +61,6 @@ def main(argv):
     single CSV table.
     """
     logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', '-o',

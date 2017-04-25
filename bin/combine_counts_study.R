@@ -1,6 +1,6 @@
-#! /usr/bin/env Rscript
+#!/usr/bin/env Rscript
+# Combine individual sample count files into a gene x sample matrix file
 # JAE for Sage Bionetworks
-# Combine individual sample count files into a gene x sample matrix file.
 # April 12, 2017
 
 library(argparse)

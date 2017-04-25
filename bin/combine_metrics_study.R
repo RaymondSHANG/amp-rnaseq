@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-# JAE for Sage Bionetworks
 # Combine individual sample metric files into a sample x metric matrix file.
+# JAE for Sage Bionetworks
 # April 13, 2017
 
 library(argparse)

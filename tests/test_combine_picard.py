@@ -1,7 +1,7 @@
 import pytest
-
 import _mypath
-import combine_picard_sample as cps
+import combine_metrics_sample as cps
+
 
 @pytest.fixture(scope='function')
 def mockstringfile(s, tmpdir):
@@ -13,6 +13,7 @@ def mockstringfile(s, tmpdir):
     f.write(s)
 
     return str(f)
+
 
 class TestCombinePicardSampleLevel:
     """

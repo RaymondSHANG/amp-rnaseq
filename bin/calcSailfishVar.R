@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+# Calculate transcript quant variance from Sailfish bootstraps
 # KKD for Sage Bionetworks
 # 15 Jul 2016
 

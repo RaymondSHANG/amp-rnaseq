@@ -1,6 +1,6 @@
-#! /usr/bin/env Rscript
+#!/usr/bin/env Rscript
+# Combine individual sample quant files into a sample x gene matrix file
 # KKD for Sage Bionetworks
-# Combine individual sample quant files into a sample x gene matrix file.
 # July 7, 2016
 
 library(argparse)
@@ -25,26 +25,22 @@ firstData = read.delim(x[1], header = args$header, row.names =1)
 ENSGnames = rownames(firstData)
 expectedLength = nrow(firstData)
 
-
 readHTS=function(inFile,inCol=args$quantCol,rNames=ENSGnames,nrows=expectedLength){
 	print(inFile)
 	data = read.delim(inFile, header = args$header, row.names =1)
     if (! nrow(data) == nrows) {
-  		stop(paste("Different number of input lines", inFile, sep = " ")) 
-	}  
+  		stop(paste("Different number of input lines", inFile, sep = " "))
+	}
   nameCheck = which((rownames(data) == rNames) == FALSE)
-  if (length(nameCheck) > 0) { 
-  	stop(paste("Mismatch of rownames at file", inFile, sep = " ")) 
+  if (length(nameCheck) > 0) {
+  	stop(paste("Mismatch of rownames at file", inFile, sep = " "))
   }
   if (ncol(data) > 0) { return(data[,inCol]) }
   else {return(rep(NA,nrow(data))) }
 }
 
-
-
 combinedSamples = sapply(as.list(x),readHTS)
 #save(collectedSums, file = paste(args$oPrefix, "collectedSums.Robj.gz", sep - "_"), compress = "bzip2")
-
 
 transNames = sapply(as.list(ENSGnames),function(y){unlist(strsplit(as.character(y), split = "|", fixed = TRUE))[1]})
 
@@ -52,6 +48,3 @@ rownames(combinedSamples) = transNames
 colnames(combinedSamples) = samples
 head(combinedSamples)
 write.table(combinedSamples,file = paste(args$oPrefix, "quant_matrix.txt", sep = "_"), row.names = TRUE, col.names = TRUE, quote = FALSE, sep = "\t")
-
-
-
