@@ -7,3 +7,6 @@ data
 
 # Unit test / coverage reports
 .cache
+
+# IPython checkpoints
+.ipynb_checkpoints
